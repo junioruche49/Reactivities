@@ -3,7 +3,7 @@ import type { Activity } from "../types";
 import agent from "../api/agent";
 
 
-export default function useActivities() {
+export default function useActivities(id?: string) {
     const queryClient = useQueryClient();
 
   const { data: activities, isPending } =  useQuery({
@@ -15,6 +15,17 @@ export default function useActivities() {
       return response.data;
     },
   });
+
+  const {data: activity, isLoading: isLoadingActivity} = useQuery({
+    queryKey: ['activities', id],
+    queryFn: async ()=>{
+      const response = await agent.get<Activity>(
+        `/api/Activities/${id}`
+      );
+      return response.data;
+    },
+    enabled: !!id
+  })
 
   const updateActivity = useMutation({
     mutationFn: async (activity: Activity)=>{
@@ -29,7 +40,8 @@ export default function useActivities() {
 
   const createActivity = useMutation({
     mutationFn: async (activity: Activity)=>{
-        await agent.post("/api/Activities", activity)
+      const response =  await agent.post("/api/Activities", activity);
+      return response.data;
     },
     onSuccess: async ()=>{
         await queryClient.invalidateQueries({
@@ -49,5 +61,5 @@ export default function useActivities() {
     }
   }) 
 
-  return {activities, isPending, updateActivity, createActivity, deleteActivity}
+  return {activities, isPending, updateActivity, createActivity, deleteActivity, activity, isLoadingActivity}
 }
