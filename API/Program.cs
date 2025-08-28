@@ -2,6 +2,9 @@ using Application.Activities.Queries;
 using Application.Core;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
+using FluentValidation;
+using Application.Activities.Validators;
+using API.Middleware;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -15,13 +18,19 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddCors();
-builder.Services.AddMediatR(x => x.RegisterServicesFromAssemblyContaining<GetActivityList.Handler>());
+builder.Services.AddMediatR(x =>
+{
+    x.RegisterServicesFromAssemblyContaining<GetActivityList.Handler>();
+    x.AddOpenBehavior(typeof(ValidationBehavior<,>));
+});
 builder.Services.AddAutoMapper(cfg =>
     {
         cfg.AddProfile(new MappingProfiles()); // Add your specific profile
         // Or scan the assembly for profiles
         cfg.AddMaps(typeof(MappingProfiles).Assembly);
     });
+builder.Services.AddValidatorsFromAssemblyContaining<CreateActivityValidator>();
+builder.Services.AddTransient<ExceptionMiddleware>();
 
 var app = builder.Build();
 
@@ -32,6 +41,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseMiddleware<ExceptionMiddleware>();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
