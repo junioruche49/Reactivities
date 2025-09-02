@@ -32,7 +32,7 @@ export default function useActivities(id?: string) {
 
   const updateActivity = useMutation({
     mutationFn: async (activity: Activity)=>{
-        await agent.put("/api/Activities", activity)
+        await agent.put(`/api/Activities/${activity.id}`, activity)
     },
     onSuccess: async ()=>{
         await queryClient.invalidateQueries({
