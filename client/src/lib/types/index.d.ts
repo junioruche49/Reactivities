@@ -1,4 +1,4 @@
-export type Activity = {
+ type Activity = {
   id?: string
   title: string
   date: Date
@@ -11,7 +11,14 @@ export type Activity = {
   longitude: number
 }
 
-export interface LocationIQSuggestion {
+type User = {
+  id: string
+  email: string
+  displayName: string
+  imageUrl: string
+}
+
+ interface LocationIQSuggestion {
   place_id: string
   osm_id: string
   osm_type: string
@@ -27,7 +34,7 @@ export interface LocationIQSuggestion {
   address: LocationIQAddress
 }
 
-export interface LocationIQAddress {
+ interface LocationIQAddress {
   name: string
   road: string
   neighbourhood: string
