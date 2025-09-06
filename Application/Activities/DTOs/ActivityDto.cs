@@ -1,4 +1,5 @@
 using System;
+using Application.Profiles.DTOs;
 // using Application.Profiles.DTOs;
 
 namespace Application.Activities.DTOs;
@@ -21,5 +22,5 @@ public class ActivityDto
     public double Longitude { get; set; }
 
     // navigation properties
-    // public ICollection<UserProfile> Attendees { get; set; } = [];
+    public ICollection<UserProfile> Attendees { get; set; } = [];
 }
