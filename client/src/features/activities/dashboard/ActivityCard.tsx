@@ -10,19 +10,17 @@ import {
   Divider,
   Typography,
 } from "@mui/material";
-import type { Activity } from "../../../lib/types";
 import { Link } from "react-router";
 import { AccessTime, Place } from "@mui/icons-material";
 import { formatDate } from "../../../lib/util/util";
+import AvatarPopover from "../../../app/shared/components/AvatarPopover";
 
 type Props = {
   activity: Activity;
 };
 export default function ActivityCard({ activity }: Props) {
-  const isHost = false;
-  const isGoing = false;
+  const { isHost, isGoing, isCancelled } = activity;
   const label = isHost ? "You are hosting" : "You are going";
-  const isCancelled = false;
   const color = isHost ? "secondary" : isGoing ? "warning" : "default";
   return (
     <Card elevation={3} sx={{ borderRadius: 3 }}>
@@ -36,7 +34,10 @@ export default function ActivityCard({ activity }: Props) {
           }}
           subheader={
             <>
-              Hosted by <Link to={`/profiles/bob`}>Bob</Link>
+              Hosted by{" "}
+              <Link to={`/profiles/${activity.hostId}`}>
+                {activity.hostDisplayName}
+              </Link>
             </>
           }
         />
@@ -73,10 +74,14 @@ export default function ActivityCard({ activity }: Props) {
           gap={2}
           sx={{ backgroundColor: "grey.200", py: 3, pl: 3 }}
         >
-          Attendees go here
+          {activity.attendees.map((attendee) => (
+            <AvatarPopover profile={attendee} key={attendee.id} />
+          ))}
         </Box>
       </CardContent>
-      <CardActions sx={{ pd: 2 }}>
+      <CardActions
+        sx={{ pd: 4, display: "flex", justifyContent: "space-between" }}
+      >
         <Typography variant="body2">{activity.description}</Typography>
         <Box display="flex" gap={3}>
           <Button

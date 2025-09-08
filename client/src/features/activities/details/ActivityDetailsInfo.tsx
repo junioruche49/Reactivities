@@ -7,7 +7,6 @@ import {
   Paper,
   Typography,
 } from "@mui/material";
-import type { Activity } from "../../../lib/types";
 import { formatDate } from "../../../lib/util/util";
 import { useState } from "react";
 import MapComponent from "../../../app/shared/components/MapComponent";
