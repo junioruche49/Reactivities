@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Application.Interfaces;
 using infrastructure.Security;
 using Infrastructure.Security;
+using infrastructure.Photos;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -36,6 +37,7 @@ builder.Services.AddMediatR(x =>
 });
 
 builder.Services.AddScoped<IUserAccessor, UserAccessor>();
+builder.Services.AddScoped<IPhotoService, PhotoService>();
 builder.Services.AddAutoMapper(cfg =>
     {
         cfg.AddProfile(new MappingProfiles()); // Add your specific profile
@@ -57,6 +59,7 @@ builder.Services.AddAuthorization(opt =>
     });
 });
 builder.Services.AddTransient<IAuthorizationHandler, IsHostRequirementHandler>();
+builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
 
 var app = builder.Build();
 
