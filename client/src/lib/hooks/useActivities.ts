@@ -20,10 +20,12 @@ export default function useActivities(id?: string) {
     enabled: !id && location.pathname == '/activities' && !!currentUser,
     select: data=>{
       return data.map((activity)=>{
+        const host = activity.attendees.find(temp=>temp.id === activity.hostId);
         return {
           ...activity,
           isHost: currentUser?.id === activity.hostId,
-          isGoing: activity.attendees.some(x=>x.id === currentUser?.id)
+          isGoing: activity.attendees.some(x=>x.id === currentUser?.id),
+          hostImageUrl: host?.imageUrl
         }
       })
     }
@@ -39,10 +41,12 @@ export default function useActivities(id?: string) {
     },
     enabled: !!id && !!currentUser,
     select: data=>{
+      const host = data.attendees.find(temp=>temp.id === data.hostId);
       return {
         ...data,
          isHost: currentUser?.id === data.hostId,
-          isGoing: data.attendees.some(x=>x.id === currentUser?.id)
+          isGoing: data.attendees.some(x=>x.id === currentUser?.id),
+          hostImageUrl: host?.imageUrl
       }
     }
   })

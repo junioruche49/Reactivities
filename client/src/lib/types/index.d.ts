@@ -14,6 +14,7 @@
   isHost: boolean,
   hostId: string,
   hostDisplayName: string
+  hostImageUrl: string
 }
 
 type Profile = {
@@ -23,6 +24,11 @@ type Profile = {
   imageUrl?: string,
   following: boolean,
   followersCount: number
+}
+
+type Photo = {
+  id: string,
+  url: string
 }
 
 type User = {
