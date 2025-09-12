@@ -50,14 +50,14 @@ export default function ProfileHeader() {
               </Box>
               <Box textAlign="center">
                 <Typography variant="h6">Following</Typography>
-                <Typography variant="h3">{profile.followersCount}</Typography>
+                <Typography variant="h3">{profile.followingCount}</Typography>
               </Box>
             </Box>
             {!isCurrentUser && (
               <>
                 <Divider sx={{ width: "100%" }} />
                 <Button
-                  //   onClick={() => updateFollowing.mutate()}
+                  onClick={() => updateFollowing.mutate()}
                   disabled={updateFollowing.isPending}
                   fullWidth
                   variant="outlined"

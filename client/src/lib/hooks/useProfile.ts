@@ -3,10 +3,9 @@ import agent from "../api/agent";
 import { useMemo } from "react";
 import type { EditProfileSchema } from "../schemas/editProfileSchema";
 
-function useProfile(id?: string) {
+function useProfile(id?: string, predicate?: string) {
     const queryClient = useQueryClient();
-    // const profile: Profile = {displayName: "Bob",followersCount: 2, following: true, id: "sdsd", bio: "dsds", imageUrl: "sdsd"}
-    const updateFollowing = {isPending: true};
+    
     const {data: profile, isLoading: loadingProfile} = useQuery<Profile>({
         queryKey: ['profile', id],
         queryFn: async()=>{
@@ -24,6 +23,16 @@ function useProfile(id?: string) {
         },
         enabled: !!id
     })
+
+    const {data: followings, isLoading: loadingFollowings} = useQuery<Profile[]>({
+        queryKey: ['followings', id, predicate],
+        queryFn: async () => {
+            const response = 
+                await agent.get<Profile[]>(`/profiles/${id}/follow-list?predicate=${predicate}`);
+            return response.data;
+        },
+        enabled: !!id && !!predicate
+    });
 
     const uploadPhoto = useMutation({
         mutationFn: async (file: Blob) => {
@@ -111,6 +120,27 @@ function useProfile(id?: string) {
         }
     })
 
+    const updateFollowing = useMutation({
+        mutationFn: async () => {
+            await agent.post(`/profiles/${id}/follow`)
+        },
+        onSuccess: () => {
+            queryClient.setQueryData(['profile', id], (profile: Profile) => {
+                queryClient.invalidateQueries({queryKey: ['followings', id, 'followers']})
+                if (!profile || profile.followersCount === undefined) return profile;
+                return {
+                    ...profile,
+                    following: !profile.following,
+                    followersCount: profile.following 
+                        ? profile.followersCount - 1 
+                        : profile.followersCount + 1
+                }
+            })
+        }
+    })
+
+    
+
     const isCurrentUser = useMemo(()=>{
         return id === queryClient.getQueryData<User>(['user'])?.id
     },[id,queryClient]);
@@ -123,7 +153,9 @@ function useProfile(id?: string) {
         uploadPhoto, 
         setMainPhoto,
         deletePhoto,
-        updateProfile
+        updateProfile,
+        followings,
+        loadingFollowings
     };
 }
 

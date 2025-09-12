@@ -15,8 +15,6 @@ type Props = {
 };
 
 export default function ProfileCard({ profile }: Props) {
-  profile.following = false;
-  profile.followersCount = 2;
   return (
     <Link to={`/profiles/${profile.id}`} style={{ textDecoration: "none" }}>
       <Card
